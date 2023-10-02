@@ -31,12 +31,25 @@ app.get("/api/movies", (req, res) => {
 
 app.post("/api/movies", (req, res) => {
   const { body } = req;
-  const sql = `INSERT INTO movies (movie_name) VALUES (?)`;
+
+  const sql = `INSERT INTO movies (movie_name) 
+  VALUES (?)`;
+
   const params = [body.movie_name];
+
   db.query(sql, params, (err, result) => {
     if (err) {
       res.status(500).json({ error: err.message });
+      return;
     }
+
+    res.status(200).json({
+      message: "success",
+      data: {
+        id: result.insertId,
+        ...body,
+      },
+    });
   });
 });
 
