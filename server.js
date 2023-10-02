@@ -53,6 +53,29 @@ app.post("/api/movies", (req, res) => {
   });
 });
 
+app.delete("/api/movies/:id", (req, res) => {
+  const sql = `DELETE FROM movies WHERE id = ?`;
+  const params = [req.params.id];
+
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      res.statusCode(500).json({ error: err.message });
+      return;
+    }
+
+    if (!result.affectedRows) {
+      res.json({ message: "Movie not found" });
+      return;
+    }
+
+    res.json({
+      message: "deleted",
+      changes: result.affectedRows,
+      id: req.params.id,
+    });
+  });
+});
+
 app.use((req, res) => {
   res.status(404).end();
 });
