@@ -82,20 +82,34 @@ app.delete("/api/movies/:id", (req, res) => {
 
   db.query(sql, params, (err, result) => {
     if (err) {
-      res.statusCode(500).json({ error: err.message });
+      res.status(500).json({ error: err.message });
       return;
     }
 
     if (!result.affectedRows) {
-      res.statusCode(404).json({ message: "Movie not found" });
+      res.status(404).json({ message: "Movie not found" });
       return;
     }
 
-    res.statusCode(200).json({
+    res.status(200).json({
       message: "deleted",
       changes: result.affectedRows,
       id: req.params.id,
     });
+  });
+});
+
+// reviews api ("api/reviews")
+app.get("/api/reviews", (req, res) => {
+  const sql = `SELECT movies.movie_name AS movie, reviews.review FROM reviews
+                LEFT JOIN movies ON reviews.movie_id = movies.id ORDER BY movies.movie_name`;
+
+  db.query(sql, (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.status(200).json({ message: "success", data: rows });
   });
 });
 
